@@ -259,6 +259,21 @@ int main(int argc, char *argv[])
   }
 #endif
 
+#ifdef WIN32
+  {
+    PROCESS_MITIGATION_STRICT_HANDLE_CHECK_POLICY policy = {
+        0,
+    };
+    policy.RaiseExceptionOnInvalidHandleReference = 1;
+    policy.HandleExceptionsPermanentlyEnabled = 1;
+    if (!SetProcessMitigationPolicy(ProcessStrictHandleCheckPolicy, &policy, sizeof(policy)))
+    {
+        fprintf(stderr, "Failed to enable Strict Handle Check Policy process mitigation");
+        return -1;
+    }
+  }
+#endif
+
   main_checkfds();
 
 #if defined(HAVE_SIGNAL) && defined(SIGPIPE)
